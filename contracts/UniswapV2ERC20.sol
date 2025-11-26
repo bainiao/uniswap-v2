@@ -23,6 +23,7 @@ contract UniswapV2ERC20 is IUniswapV2ERC20 {
 
     constructor() public {
         uint chainId;
+        // 使用内联汇编（Inline Assembly）获取链ID
         assembly {
             chainId := chainid
         }

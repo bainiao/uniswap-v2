@@ -87,13 +87,22 @@ contract UniswapV2Pair is IUniswapV2Pair, UniswapV2ERC20 {
 
     // if fee is on, mint liquidity equivalent to 1/6th of the growth in sqrt(k)
     function _mintFee(uint112 _reserve0, uint112 _reserve1) private returns (bool feeOn) {
+        // get feeTo address from factory contract
         address feeTo = IUniswapV2Factory(factory).feeTo();
+        // if feeTo is set, calculate fees and transfer to feeTo
         feeOn = feeTo != address(0);
+        // make copy of klast on memory, doing so saves gas
         uint _kLast = kLast; // gas savings
         if (feeOn) {
             if (_kLast != 0) {
+                // this is not first time we call mint
+                // calculating current geometric mean liquidity sqrt(k) of trading pair, serving as a core metric 
+                // for measuring depth of trading pool and distributing fee.
                 uint rootK = Math.sqrt(uint(_reserve0).mul(_reserve1));
+                // calculating gemetric mean liquidity of trading pair at last time.
                 uint rootKLast = Math.sqrt(_kLast);
+                // if current geometric mean liquidity is greater than geometric mean liquidity at last time,
+                // it means that trading pair's liquidity has increased, then we need to mint liquidity to feeTo address.
                 if (rootK > rootKLast) {
                     uint numerator = totalSupply.mul(rootK.sub(rootKLast));
                     uint denominator = rootK.mul(5).add(rootKLast);
