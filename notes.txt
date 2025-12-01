@@ -1,0 +1,12 @@
+1. function swap(uint amount0Out, uint amount1Out, address to, bytes calldata data)
+    1. 检查amount0Out或amount1Out是否都大于0，至少有一个大于0，
+    2. 获取当前reserve0和reserve1
+    3. 检查amount0Out<reserve0和amount1Out<reserve1
+    4. 声明balance0和balance1
+    5. 子代码块：to的地址不能是token0或token1
+                如果amount0Out>0, 则safeTransfer(token0, to, amount0Out)
+                如果amount1Out>0, 则safeTransfer(token1, to, amount1Out)
+                如果to地址是合约，并且data有值，则执行IUniswapVCallee(to)uniswapV2Call(msg.sender, amount0Out, amount1Out, data)
+                获取池子地址两种代币数量IERC20(token1).balanceOf(address(this))
+    6. 计算amount0In和amount1In      
+    7. 检查amount0In或者amount1In大于0      
