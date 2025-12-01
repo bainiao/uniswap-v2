@@ -28,7 +28,9 @@ contract UniswapV2Factory is IUniswapV2Factory {
         bytes memory bytecode = type(UniswapV2Pair).creationCode;
         bytes32 salt = keccak256(abi.encodePacked(token0, token1));
         assembly {
+            // value, byte code address, byte code size, salt
             pair := create2(0, add(bytecode, 32), mload(bytecode), salt)
+            // address = hash(0xFF + deployerAddress + salt + keccak256(bytecode))[12:]
         }
         IUniswapV2Pair(pair).initialize(token0, token1);
         getPair[token0][token1] = pair;
