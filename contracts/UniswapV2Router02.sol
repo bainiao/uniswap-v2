@@ -42,6 +42,7 @@ contract UniswapV2Router02 {
         if (IUniswapV2Factory(factory).getPair(tokenA, tokenB) == address(0)) {
             IUniswapV2Factory(factory).createPair(tokenA, tokenB);
         }
+        //(uint reserveA, uint reserveB, ) = IUniswapV2Pair(IUniswapV2Factory(factory).getPair(tokenA, tokenB)).getReserves();
         (uint reserveA, uint reserveB) = UniswapV2Library.getReserves(factory, tokenA, tokenB);
         if (reserveA == 0 && reserveB == 0) {
             (amountA, amountB) = (amountADesired, amountBDesired);
@@ -134,7 +135,9 @@ contract UniswapV2Router02 {
             address(this),
             deadline
         );
+        // withdraw eth, fisrt withdraw token pair to router, then transfer tokens from router to to_address
         TransferHelper.safeTransfer(token, to, amountToken);
+        // withdraw eth token
         IWETH(WETH).withdraw(amountETH);
         TransferHelper.safeTransferETH(to, amountETH);
     }
